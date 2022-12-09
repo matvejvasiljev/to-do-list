@@ -31,7 +31,7 @@ class App extends React.Component {
         console.log(12345);
         this.setState(function (state) {
             let newItem = {
-                text: "Прибраться в комнате."
+                text: this.state.text
             }
             let items = state.items
             items.push(newItem)
