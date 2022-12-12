@@ -24,48 +24,101 @@ class App extends React.Component {
                 },
             ],
             text: "",
+            modalClassName: "modal",
         }
     }
     handleSubmit(e) {
         e.preventDefault()
-        console.log(12345);
         this.setState(function (state) {
             let newItem = {
-                text: this.state.text
+                text: state.text
             }
             let items = state.items
-            items.push(newItem)
-            return{
+            if (state.text != "") {
+                items.push(newItem)
+            }
+            return {
                 items: items,
+                text: "",
+            }
+        })
+    }
+
+    // handleDeleteAll(e) {
+    //     this.setState(function (state) {
+    //         let items = []
+    //         return{
+    //             items: items,
+    //         }
+    //     })
+    // }
+
+    handleDelete(id) {
+        this.setState(function (state) {
+
+            let items = state.items
+            items.splice(id, 1)
+            return {
+                items: items,
+            }
+        })
+    }
+
+    handleEditStart(id) {
+        this.setState(function (state) {
+            let modalClassName = state.modalClassName
+            modalClassName = modalClassName + " modalShow"
+            return {
+                modalClassName: modalClassName,
+            }
+        })
+    }
+
+    handleEditClose() {
+        this.setState(function (state) {
+            let modalClassName = state.modalClassName
+            modalClassName = "modal"
+            return {
+                modalClassName: modalClassName,
             }
         })
     }
     render() {
         return (
-            <form action="" onSubmit={(e) => this.handleSubmit(e)}>
-                <h1>ToDo App</h1>
-                <ol>
-                    {
-                        this.state.items.map((item, id) => (
-                            <li key={id}>
-                                <p>{item.text}</p>
-                                <div className="buttonContainer">
-                                    <button type="button">🖊️</button>
-                                    <button type="button">🗑️</button>
-                                </div>
-                            </li>
-                        ))
-                    }
-                </ol>
-                <input type="text" value={this.state.text} onChange={(e) => this.setState({ text: e.target.value })} />
-                <button>📌</button>
-                <button type="button">💣</button>
-            </form>
+            <div>
+                <div className={this.state.modalClassName}>
+                    <form action="">
+                        <h2>Edit:</h2>
+                        <input type="text" />
+                        <button>🖊️</button>
+                        <button onClick={() => this.handleEditClose()} type="button" id="closeEdit">❌</button>
+                    </form>
+                </div>
+                <form action="" onSubmit={(e) => this.handleSubmit(e)}>
+                    <h1>ToDo App</h1>
+                    <ol>
+                        {
+                            this.state.items.map((item, id) => (
+                                <li key={id}>
+                                    <p>{item.text}</p>
+                                    <div className="buttonContainer">
+                                        <button onClick={() => this.handleEditStart(id)} type="button">🖊️</button>
+                                        <button onClick={() => this.handleDelete(id)} type="button">🗑️</button>
+                                    </div>
+                                </li>
+                            ))
+                        }
+                    </ol>
+                    <input type="text" value={this.state.text} onChange={(e) => this.setState({ text: e.target.value })} />
+                    <button>📌</button>
+                    <button onClick={() => this.setState({ items: [] })} type="button">💣</button>
+                </form>
+            </div>
         );
     }
 }
 
 root.render(<App></App>);
 
-// сделать чтобы текст добавлялся из input
-// попробовать сделать кнопку бомбы (удаления всего)
+// по нажатии на кнопку подтверждения изменения закрывать modal
+// при открытии modal добавить в input изменяемое дело
