@@ -104,7 +104,17 @@ class App extends React.Component {
     }
 
     changeColor(e) {
-        e.target.style.color = "rgb(" + Math.random()*255 + ", " + Math.random()*255 + ", " + Math.random()*255 + ")"
+        e.target.style.color = "rgb(" + Math.random() * 255 + ", " + Math.random() * 255 + ", " + Math.random() * 255 + ")"
+    }
+
+    handleCheck(e) {
+        if (e.target.style.textDecoration == "line-through") {
+            e.target.style.textDecoration = "none"
+        }
+        else{
+            e.target.style.textDecoration = "line-through"
+        }
+        console.log(window.getComputedStyle(e.target, null).getPropertyValue("text-decoration-line"));
     }
 
     render() {
@@ -124,7 +134,7 @@ class App extends React.Component {
                         {
                             this.state.items.map((item, id) => (
                                 <li key={id}>
-                                    <p>{item.text}</p>
+                                    <p onClick={(e) => this.handleCheck(e)}>{item.text}</p>
                                     <div className="buttonContainer">
                                         <button onClick={() => this.handleEditStart(id)} type="button">🖊️</button>
                                         <button onClick={() => this.handleDelete(id)} type="button">🗑️</button>
@@ -143,6 +153,3 @@ class App extends React.Component {
 }
 
 root.render(<App></App>);
-
-// по нажатии на кнопку подтверждения изменения закрывать modal
-// при открытии modal добавить в input изменяемое дело
