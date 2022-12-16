@@ -24,6 +24,8 @@ class App extends React.Component {
                 },
             ],
             text: "",
+            editText: "",
+            editItemId: 0,
             modalClassName: "modal",
         }
     }
@@ -70,6 +72,8 @@ class App extends React.Component {
             modalClassName = modalClassName + " modalShow"
             return {
                 modalClassName: modalClassName,
+                editText: state.items[id].text,
+                editItemId: id,
             }
         })
     }
@@ -83,19 +87,39 @@ class App extends React.Component {
             }
         })
     }
+
+    handleEditSubmit(e) {
+        e.preventDefault()
+        this.setState(function (state) {
+            let modalClassName = state.modalClassName
+            modalClassName = "modal"
+
+            let newItems = state.items
+            newItems[state.editItemId].text = state.editText
+            return {
+                modalClassName: modalClassName,
+                items: newItems,
+            }
+        })
+    }
+
+    changeColor(e) {
+        e.target.style.color = "rgb(" + Math.random()*255 + ", " + Math.random()*255 + ", " + Math.random()*255 + ")"
+    }
+
     render() {
         return (
             <div>
                 <div className={this.state.modalClassName}>
                     <form action="">
                         <h2>Edit:</h2>
-                        <input type="text" />
-                        <button>🖊️</button>
+                        <input type="text" value={this.state.editText} onChange={(e) => this.setState({ editText: e.target.value })} />
+                        <button onClick={(e) => this.handleEditSubmit(e)}>🖊️</button>
                         <button onClick={() => this.handleEditClose()} type="button" id="closeEdit">❌</button>
                     </form>
                 </div>
                 <form action="" onSubmit={(e) => this.handleSubmit(e)}>
-                    <h1>ToDo App</h1>
+                    <h1 onClick={(e) => this.changeColor(e)}>ToDo App</h1>
                     <ol>
                         {
                             this.state.items.map((item, id) => (
