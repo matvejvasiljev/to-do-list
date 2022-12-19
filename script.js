@@ -23,11 +23,24 @@ class App extends React.Component {
                     text: "Сделать уроки.",
                 },
             ],
+            tabs: [
+                {
+                    text: "All"
+                },
+                {
+                    text: "School"
+                },
+                {
+                    text: "Hobbies"
+                },
+            ],
+            activeTab: 0,
             text: "",
             editText: "",
             editItemId: 0,
             modalClassName: "modal",
         }
+        this.handleTabChange = this.handleTabChange.bind(this);
     }
     handleSubmit(e) {
         e.preventDefault()
@@ -111,10 +124,18 @@ class App extends React.Component {
         if (e.target.style.textDecoration == "line-through") {
             e.target.style.textDecoration = "none"
         }
-        else{
+        else {
             e.target.style.textDecoration = "line-through"
         }
         console.log(window.getComputedStyle(e.target, null).getPropertyValue("text-decoration-line"));
+    }
+
+    handleTabChange(id) {
+        this.setState(function (state) {
+            return {
+                activeTab: id,
+            }
+        })
     }
 
     render() {
@@ -130,6 +151,14 @@ class App extends React.Component {
                 </div>
                 <form action="" onSubmit={(e) => this.handleSubmit(e)}>
                     <h1 onClick={(e) => this.changeColor(e)}>ToDo App</h1>
+                    <button id="addTab">+Tab</button>
+                    <ul>
+                        {
+                            this.state.tabs.map((tab, id) => (
+                                <Tab handleTabChange={this.handleTabChange} tab={tab.text} key={id} activeTab={this.state.activeTab} id={id}></Tab>
+                            ))
+                        }
+                    </ul>
                     <ol>
                         {
                             this.state.items.map((item, id) => (
@@ -148,8 +177,29 @@ class App extends React.Component {
                     <button onClick={() => this.setState({ items: [] })} type="button">💣</button>
                 </form>
             </div>
-        );
+        )
     }
 }
+class Tab extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
 
+        }
+    }
+    render() {
+        let sign = ""
+        // if (this.props.activeTab == this.props.id) {
+        //     sign = "!"
+        // }
+        // else{
+        //     sign = ""
+        // }
+        return (
+            <li onClick={() => this.props.handleTabChange(this.props.id)} className={this.props.activeTab == this.props.id ? "activeTab" : ""}>
+                <p>{this.props.tab + sign}</p>
+            </li>
+        )
+    }
+}
 root.render(<App></App>);

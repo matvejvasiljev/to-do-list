@@ -89,7 +89,7 @@ input {
     padding-right: 5px;
 }
 
-input:focus{
+input:focus {
     border: 2px solid #ccc;
 }
 
@@ -99,7 +99,7 @@ input:focus{
     width: 50px;
 } */
 
-.modal{
+.modal {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -111,21 +111,59 @@ input:focus{
     transition: 0.5s;
 }
 
-.modalShow{
+.modalShow {
     transform: translateY(0);
 }
+
 /* 
 .modal input{
     width: calc(100% - 50px);
 } */
 
-.modal form{
+.modal form {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
-#closeEdit{
+#closeEdit {
     filter: grayscale(100%);
+}
+
+#addTab {
+    float: left;
+}
+
+ul {
+    float: left;
+    width: calc(100% - 50px);
+    overflow-x: scroll;
+    scrollbar-width: none;
+    white-space: nowrap;
+}
+/* 
+ul::-webkit-scrollbar {
+    display: none;
+} */
+
+ul li {
+    /* background-color: #eee; */
+    background: none;
+    list-style: none;
+    display: inline-block;
+    border-radius: 10px;
+    padding-right: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+    transition: 0.1s;
+    cursor: pointer;
+}
+
+ul li:hover {
+    background-color: #eee;
+}
+
+.activeTab {
+    background-color: #eee;
 }
