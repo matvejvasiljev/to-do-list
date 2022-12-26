@@ -18,21 +18,23 @@ class App extends React.Component {
             items: [
                 {
                     text: "Погулять с собаками.",
+                    tab: 0,
                 },
                 {
                     text: "Сделать уроки.",
+                    tab: 0,
                 },
             ],
             tabs: [
                 {
                     text: "All"
                 },
-                {
-                    text: "School"
-                },
-                {
-                    text: "Hobbies"
-                },
+                // {
+                //     text: "School"
+                // },
+                // {
+                //     text: "Hobbies"
+                // },
             ],
             activeTab: 0,
             text: "",
@@ -41,12 +43,15 @@ class App extends React.Component {
             modalClassName: "modal",
         }
         this.handleTabChange = this.handleTabChange.bind(this);
+        this.handleTabDelete = this.handleTabDelete.bind(this);
+        this.handleTabRename = this.handleTabRename.bind(this);
     }
     handleSubmit(e) {
         e.preventDefault()
         this.setState(function (state) {
             let newItem = {
-                text: state.text
+                text: state.text,
+                tab: state.activeTab,
             }
             let items = state.items
             if (state.text != "") {
@@ -59,18 +64,8 @@ class App extends React.Component {
         })
     }
 
-    // handleDeleteAll(e) {
-    //     this.setState(function (state) {
-    //         let items = []
-    //         return{
-    //             items: items,
-    //         }
-    //     })
-    // }
-
     handleDelete(id) {
         this.setState(function (state) {
-
             let items = state.items
             items.splice(id, 1)
             return {
@@ -138,6 +133,36 @@ class App extends React.Component {
         })
     }
 
+    handleTabAdd() {
+        this.setState(function (state) {
+            let tabs = state.tabs
+            tabs.push({
+                text: "Tab " + tabs.length
+            })
+            return {
+                tabs: tabs,
+            }
+        })
+    }
+
+    handleTabDelete(id) {
+        this.setState(function (state) {
+            let tabs = state.tabs
+            tabs.splice(id, 1)
+        })
+    }
+
+    handleTabRename(e, id) {
+        this.setState(function (state) {
+            let tabs = state.tabs
+            tabs[id].text = e.target.value
+
+            return {
+                tabs: tabs,
+            }
+        })
+    }
+
     render() {
         return (
             <div>
@@ -151,24 +176,25 @@ class App extends React.Component {
                 </div>
                 <form action="" onSubmit={(e) => this.handleSubmit(e)}>
                     <h1 onClick={(e) => this.changeColor(e)}>ToDo App</h1>
-                    <button id="addTab">+Tab</button>
+                    <button onClick={() => this.handleTabAdd()} id="addTab">+Tab</button>
                     <ul>
                         {
                             this.state.tabs.map((tab, id) => (
-                                <Tab handleTabChange={this.handleTabChange} tab={tab.text} key={id} activeTab={this.state.activeTab} id={id}></Tab>
+                                <Tab handleTabChange={this.handleTabChange} handleTabDelete={this.handleTabDelete} handleTabRename={this.handleTabRename} tab={tab.text} key={id} activeTab={this.state.activeTab} id={id}></Tab>
                             ))
                         }
                     </ul>
                     <ol>
                         {
                             this.state.items.map((item, id) => (
+                                this.state.activeTab == item.tab ?
                                 <li key={id}>
                                     <p onClick={(e) => this.handleCheck(e)}>{item.text}</p>
                                     <div className="buttonContainer">
                                         <button onClick={() => this.handleEditStart(id)} type="button">🖊️</button>
                                         <button onClick={() => this.handleDelete(id)} type="button">🗑️</button>
                                     </div>
-                                </li>
+                                </li> : null
                             ))
                         }
                     </ol>
@@ -184,22 +210,46 @@ class Tab extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-
+            rename: false
         }
     }
+
+    handleTabEdit() {
+        this.setState(function (state) {
+            return {
+                rename: !state.rename,
+            }
+        }, function () {
+            console.log(this.state.rename);
+        });
+    }
+
     render() {
         let sign = ""
+        let deleteButton = ""
+        let tabName = <p>{this.props.tab + sign}</p>
+
+        if (this.props.id != 0) {
+            deleteButton = <a onClick={() => this.props.handleTabDelete(this.props.id)} href="#/">❌</a>
+        }
+        if (this.state.rename == true && this.props.id != 0) {
+            tabName = <input value={this.props.tab + sign} autoFocus onChange={(e) => this.props.handleTabRename(e, this.props.id)} />
+        }
         // if (this.props.activeTab == this.props.id) {
         //     sign = "!"
         // }
         // else{
         //     sign = ""
         // }
+
         return (
-            <li onClick={() => this.props.handleTabChange(this.props.id)} className={this.props.activeTab == this.props.id ? "activeTab" : ""}>
-                <p>{this.props.tab + sign}</p>
+            <li onClick={() => this.props.handleTabChange(this.props.id)} className={this.props.activeTab == this.props.id ? "activeTab" : ""} onDoubleClick={() => this.handleTabEdit()}>
+                {deleteButton}
+                {tabName}
             </li>
         )
     }
 }
 root.render(<App></App>);
+
+// починить баг когда ни одна из вкладок не выбрана

@@ -29,7 +29,7 @@ form {
 
 h1 {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 ol {
@@ -87,6 +87,7 @@ input {
     vertical-align: middle;
     padding-left: 5px;
     padding-right: 5px;
+    font-family: 'Nunito', sans-serif;
 }
 
 input:focus {
@@ -133,15 +134,18 @@ input:focus {
 
 #addTab {
     float: left;
+    margin-top: 19px;
 }
 
 ul {
     float: left;
     width: calc(100% - 50px);
+    padding-top: 19px;
     overflow-x: scroll;
     scrollbar-width: none;
     white-space: nowrap;
 }
+
 /* 
 ul::-webkit-scrollbar {
     display: none;
@@ -158,6 +162,9 @@ ul li {
     margin-right: 5px;
     transition: 0.1s;
     cursor: pointer;
+    /* чтобы крестики не выходили за рамку li */
+    position: relative;
+    overflow: visible;
 }
 
 ul li:hover {
@@ -166,4 +173,46 @@ ul li:hover {
 
 .activeTab {
     background-color: #eee;
+}
+
+ul a {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 10px;
+    filter: grayscale(1);
+    border-radius: 25px;
+    background-color: white;
+    /* border: 1px solid #eee; */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    width: 25px;
+    line-height: 25px;
+    text-align: center;
+    text-decoration: none;
+    transform: translate(33%, -33%);
+    opacity: 0;
+    transition: 0.1s;
+}
+
+ul li:hover a {
+    opacity: 0.5;
+}
+
+ul a:hover {
+    opacity: 1 !important;
+}
+
+ul input {
+    background: none;
+    border: none;
+    width: 100px;
+    font-size: 16px;
+    padding: 0;
+    line-height: 50px;
+    display: block;
+    outline: none;
+}
+
+ul input:focus {
+    border: none;
 }
