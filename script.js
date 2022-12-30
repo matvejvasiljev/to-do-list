@@ -27,7 +27,8 @@ class App extends React.Component {
             ],
             tabs: [
                 {
-                    text: "All"
+                    text: "All",
+                    id: 0,
                 },
                 // {
                 //     text: "School"
@@ -41,6 +42,7 @@ class App extends React.Component {
             editText: "",
             editItemId: 0,
             modalClassName: "modal",
+            tabCounter: 1,
         }
         this.handleTabChange = this.handleTabChange.bind(this);
         this.handleTabDelete = this.handleTabDelete.bind(this);
@@ -51,7 +53,7 @@ class App extends React.Component {
         this.setState(function (state) {
             let newItem = {
                 text: state.text,
-                tab: state.activeTab,
+                tab: state.tabs[state.activeTab].id,
             }
             let items = state.items
             if (state.text != "") {
@@ -137,18 +139,36 @@ class App extends React.Component {
         this.setState(function (state) {
             let tabs = state.tabs
             tabs.push({
-                text: "Tab " + tabs.length
+                text: "Tab " + tabs.length,
+                id: state.tabCounter,
             })
             return {
                 tabs: tabs,
+                tabCounter: state.tabCounter + 1,
             }
         })
     }
 
-    handleTabDelete(id) {
+    handleTabDelete(e, id) {
+        e.stopPropagation()
         this.setState(function (state) {
             let tabs = state.tabs
+            let activeTab = 0
+            let allItems = state.items
+            for (let i = 0; i < state.items.length; i++) {
+                if (state.items[i].tab == tabs[id].id) {
+                    allItems.splice(i, 1)
+                    console.log(i);
+                }                
+            }
             tabs.splice(id, 1)
+            return {
+                activeTab: activeTab,
+                items: allItems,
+            }
+        }, function () {
+            console.log(this.state.activeTab);
+            console.log(this.state.items);
         })
     }
 
@@ -180,21 +200,21 @@ class App extends React.Component {
                     <ul>
                         {
                             this.state.tabs.map((tab, id) => (
-                                <Tab handleTabChange={this.handleTabChange} handleTabDelete={this.handleTabDelete} handleTabRename={this.handleTabRename} tab={tab.text} key={id} activeTab={this.state.activeTab} id={id}></Tab>
+                                <Tab handleTabChange={this.handleTabChange} handleTabDelete={this.handleTabDelete} handleTabRename={this.handleTabRename} tab={tab.text} key={id} activeTab={this.state.activeTab} id={id} tabCounter={tab.id}></Tab>
                             ))
                         }
                     </ul>
                     <ol>
                         {
                             this.state.items.map((item, id) => (
-                                this.state.activeTab == item.tab ?
-                                <li key={id}>
-                                    <p onClick={(e) => this.handleCheck(e)}>{item.text}</p>
-                                    <div className="buttonContainer">
-                                        <button onClick={() => this.handleEditStart(id)} type="button">🖊️</button>
-                                        <button onClick={() => this.handleDelete(id)} type="button">🗑️</button>
-                                    </div>
-                                </li> : null
+                                this.state.tabs[this.state.activeTab].id == item.tab ?
+                                    <li key={id}>
+                                        <p onClick={(e) => this.handleCheck(e)}>{item.text}</p>
+                                        <div className="buttonContainer">
+                                            <button onClick={() => this.handleEditStart(id)} type="button">🖊️</button>
+                                            <button onClick={() => this.handleDelete(id)} type="button">🗑️</button>
+                                        </div>
+                                    </li> : null
                             ))
                         }
                     </ol>
@@ -230,7 +250,7 @@ class Tab extends React.Component {
         let tabName = <p>{this.props.tab + sign}</p>
 
         if (this.props.id != 0) {
-            deleteButton = <a onClick={() => this.props.handleTabDelete(this.props.id)} href="#/">❌</a>
+            deleteButton = <a onClick={(e) => this.props.handleTabDelete(e, this.props.id)} href="#/">❌</a>
         }
         if (this.state.rename == true && this.props.id != 0) {
             tabName = <input value={this.props.tab + sign} autoFocus onChange={(e) => this.props.handleTabRename(e, this.props.id)} />
@@ -251,5 +271,3 @@ class Tab extends React.Component {
     }
 }
 root.render(<App></App>);
-
-// починить баг когда ни одна из вкладок не выбрана
